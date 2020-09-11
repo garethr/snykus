@@ -34,6 +34,13 @@ jobs:
           echo ::set-output name=tags::${TAGS}
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
+      - name: Cache Docker layers
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
       - name: Login to DockerHub
         if: github.event_name != 'pull_request'
         uses: docker/login-action@v1 
@@ -46,7 +53,9 @@ jobs:
         with:
           load: true
           tags: ${{ steps.prep.outputs.tags }}
-      - name: Run Snyk to check Docker image for vulnerabilities
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache
+      - name: Monitor published image for vulnerabilities with Snyk
         uses: snyk/actions/docker@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
@@ -55,7 +64,7 @@ jobs:
           image: ${{ steps.prep.outputs.tag }}
           args: --file=Dockerfile --project-name=${{ steps.prep.outputs.tag }}
         if: github.event_name != 'pull_request'
-      - name: Run Snyk to check Docker image for vulnerabilities
+      - name: Test the image with Snyk for high-severity vulnerabilities
         uses: snyk/actions/docker@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
@@ -68,4 +77,6 @@ jobs:
         with:
           push: true
           tags: ${{ steps.prep.outputs.tags }}
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache
         if: github.event_name != 'pull_request'
