@@ -46,7 +46,6 @@ jobs:
         with:
           load: true
           tags: ${{ steps.prep.outputs.tags }}
-
       - name: Run Snyk to check Docker image for vulnerabilities
         uses: snyk/actions/docker@master
         env:
@@ -56,7 +55,14 @@ jobs:
           image: ${{ steps.prep.outputs.tag }}
           args: --file=Dockerfile --project-name=${{ steps.prep.outputs.tag }}
         if: github.event_name != 'pull_request'
-
+      - name: Run Snyk to check Docker image for vulnerabilities
+        uses: snyk/actions/docker@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          image: ${{ steps.prep.outputs.tag }}
+          args: --file=Dockerfile --severity-threshold=high
+        if: github.event_name == 'pull_request'
       - name: Push
         uses: docker/build-push-action@v2
         with:
