@@ -1,1 +1,1 @@
-FROM debian:stable
+FROM debian:10
