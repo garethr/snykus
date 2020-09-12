@@ -34,3 +34,6 @@ By monitoring them in Snyk we can see the current vulnerabilities, but Snyk will
 The workflow will fail the pull request check if the changes introduce high-severity vulnerabilities into the image. You can see an example of this in action in [#1](https://github.com/garethr/snykus/pull/1).
 
 ![Showing a failing PR check](assets/pr.png)
+
+
+_Inspired by the example workflow from [docker/build-push-action](https://github.com/docker/build-push-action#complete-workflow)._
