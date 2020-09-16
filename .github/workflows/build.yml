@@ -85,6 +85,21 @@ jobs:
           image: ${{ steps.prep.outputs.tag }}
           args: --file=Dockerfile --severity-threshold=high
         if: github.event_name == 'pull_request'
+      - name: Output a SARIF file from Snyk
+        continue-on-error: true
+        uses: snyk/actions/docker@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          sarif: true
+          image: ${{ steps.prep.outputs.tag }}
+          args: --file=Dockerfile
+        if: github.ref == 'refs/heads/master'
+      - name: Upload the SARIF file to GitHub Code Scanning
+        uses: github/codeql-action/upload-sarif@v1
+        with:
+          sarif_file: snyk.sarif
+        if: github.ref == 'refs/heads/master'
       - name: Push
         uses: docker/build-push-action@v2
         with:
