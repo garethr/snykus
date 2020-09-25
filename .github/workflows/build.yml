@@ -101,6 +101,11 @@ jobs:
           inputSarifFile: snyk.sarif
           outputSarifFile: snyk+securecodewarrior.sarif
         if: github.ref == 'refs/heads/master'
+      - uses: actions/upload-artifact@v2
+        with:
+          name: SARIF
+          path: snyk+securecodewarrior.sarif
+        if: github.ref == 'refs/heads/master'
       - name: Upload the SARIF file to GitHub Code Scanning
         uses: github/codeql-action/upload-sarif@v1
         with:
