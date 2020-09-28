@@ -36,4 +36,13 @@ The workflow will fail the pull request check if the changes introduce high-seve
 ![Showing a failing PR check](assets/pr.png)
 
 
+## Showing vulnerabilities in `latest` in GitHub Code Scanning
+
+The `latest` image vulnerabilities are also uploaded to GitHub Code Scanning, so we can see a list of issues directly in GitHub.
+
+![GitHub Code Scanning](assets/codescanning.png)
+
+We are also adding additional context to the output using [the Secure Code Warrior](https://github.com/SecureCodeWarrior/github-action-add-sarif-contextual-training) action.
+
+
 _Inspired by the example workflow from [docker/build-push-action](https://github.com/docker/build-push-action#complete-workflow)._
